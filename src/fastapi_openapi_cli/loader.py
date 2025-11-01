@@ -1,5 +1,4 @@
 import importlib
-from typing import Any
 
 from fastapi import FastAPI
 
@@ -16,5 +15,14 @@ def load_app(app_path: str) -> FastAPI:
     except ModuleNotFoundError as e:
         raise AppLoadError(f"Could not import module '{module_path}': {e}") from e
 
-    app: Any = getattr(module, app_name)
+    try:
+        app = getattr(module, app_name)
+    except AttributeError as e:
+        raise AppLoadError(f"Module '{module_path}' has no attribute '{app_name}'") from e
+
+    if not isinstance(app, FastAPI):
+        raise AppLoadError(
+            f"Attribute '{app_name}' in module '{module_path}' is not a FastAPI instance"
+        )
+
     return app
