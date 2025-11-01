@@ -10,8 +10,14 @@ dependencies = ["fastapi>=0.115.0", "typer>=0.15.0", "pyyaml>=6.0.2"]
 [project.scripts]
 fastapi-openapi = "fastapi_openapi_cli.cli:app"
 
-[project.optional-dependencies]
-dev = ["pytest>=8.3.0", "pytest-cov>=6.0.0", "ruff>=0.8.0", "ty>=0.0.1a25"]
+[dependency-groups]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-cov>=6.0.0",
+    "ruff>=0.8.0",
+    "ty>=0.0.1a25",
+    "deptry>=0.21.0",
+]
 
 [build-system]
 requires = ["uv_build>=0.9.7,<0.10.0"]
@@ -20,7 +26,7 @@ build-backend = "uv_build"
 [tool.ruff]
 line-length = 100
 target-version = "py312"
-select = [
+lint.select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
     "F",   # pyflakes
@@ -53,3 +59,7 @@ exclude_lines = [
     "if __name__ == .__main__.:",
     "if TYPE_CHECKING:",
 ]
+
+[tool.deptry]
+extend_exclude = ["tests"]
+known_first_party = ["fastapi_openapi_cli"]

@@ -42,14 +42,14 @@ git clone https://github.com/hectcastro/fastapi-openapi-cli.git
 cd fastapi-openapi-cli
 
 # Install dependencies
-uv sync --all-extras
+uv sync
 ```
 
 ### Running Tests
 
 ```bash
 # Run all tests with coverage
-uv run pytest
+make test
 
 # Run specific test file
 uv run pytest tests/test_cli.py
@@ -62,20 +62,31 @@ uv run pytest --no-cov
 
 ```bash
 # Check code with ruff
-uv run ruff check .
-
-# Fix issues automatically
-uv run ruff check --fix .
+make lint
 
 # Format code
-uv run ruff format .
+make format
 ```
 
 ### Type Checking
 
 ```bash
 # Run type checking with ty
-uv run ty check src
+make types
+```
+
+### Dependency Analysis
+
+```bash
+# Check for dependency issues with deptry
+make deps
+```
+
+### CI Pipeline
+
+```bash
+# Run all checks (lint, types, tests) - same as CI
+make ci
 ```
 
 ### Running the CLI Locally
