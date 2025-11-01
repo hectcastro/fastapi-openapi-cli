@@ -3,6 +3,7 @@ name = "fastapi-openapi-cli"
 version = "0.1.0"
 description = "CLI tool to export FastAPI OpenAPI specifications"
 readme = "README.md"
+license = { text = "Apache-2.0" }
 authors = [{ name = "Hector Castro", email = "hectcastro@gmail.com" }]
 requires-python = ">=3.12"
 dependencies = ["fastapi>=0.115.0", "typer>=0.15.0", "pyyaml>=6.0.2"]
