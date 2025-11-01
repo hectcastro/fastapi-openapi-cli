@@ -1,4 +1,5 @@
 import json
+import re
 from pathlib import Path
 
 import yaml
@@ -7,6 +8,20 @@ from typer.testing import CliRunner
 from fastapi_openapi_cli.cli import app
 
 runner = CliRunner()
+
+
+def strip_ansi_codes(text: str) -> str:
+    """
+    Remove ANSI escape sequences from text.
+
+    This is necessary because Typer uses Rich for formatting, and Rich doesn't
+    respect Click's CliRunner color parameter. This is a known issue:
+    https://github.com/ewels/rich-click/issues/232
+
+    Uses the standard regex pattern for ANSI escape sequences.
+    """
+    ansi_escape_pattern = re.compile(r"\x1b(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])")
+    return ansi_escape_pattern.sub("", text)
 
 
 def test_export_to_stdout():
@@ -54,5 +69,7 @@ def test_export_help():
     result = runner.invoke(app, ["--help"])
 
     assert result.exit_code == 0
-    assert "export" in result.stdout.lower()
-    assert "--app" in result.stdout
+    # Strip ANSI codes since Rich doesn't respect CliRunner's color parameter
+    clean_output = strip_ansi_codes(result.stdout)
+    assert "export" in clean_output.lower()
+    assert "--app" in clean_output
