@@ -60,7 +60,7 @@ uv run fastapi-openapi --app tests.fixtures.sample_app:app -o openapi.json
 
 The codebase follows a three-layer architecture:
 
-1. **CLI Layer** (`cli.py`): Typer-based command-line interface that orchestrates the workflow
+1. **CLI Layer** (`cli.py`): argparse-based command-line interface that orchestrates the workflow
 2. **Loader Layer** (`loader.py`): Dynamically imports and validates FastAPI applications from module paths
 3. **Export Layer** (`export.py`): Extracts OpenAPI specs and serializes to JSON/YAML
 
@@ -83,7 +83,7 @@ Tests are organized by component (not 1:1 with source files) and focus on behavi
 - `test_loader.py`: App loading validation and error handling
 - `tests/fixtures/`: Sample FastAPI apps for testing different scenarios
 
-**Testing Typer CLIs with Rich**: The test suite includes `strip_ansi_codes()` helper to remove ANSI escape sequences from Typer/Rich output. This is necessary because Rich doesn't respect Click's `CliRunner` color parameter - a known issue (https://github.com/ewels/rich-click/issues/232). When testing help text or formatted output, strip ANSI codes before assertions.
+**Testing CLI output**: The test suite invokes `main(argv)` directly and uses `capsys` to assert stdout/stderr behavior for help, success, and error paths.
 
 ## Code Standards
 
@@ -115,9 +115,9 @@ Tests are organized by component (not 1:1 with source files) and focus on behavi
 The package uses `[project.scripts]` in `pyproject.toml` to create the `fastapi-openapi` console script:
 ```toml
 [project.scripts]
-fastapi-openapi = "fastapi_openapi_cli.cli:app"
+fastapi-openapi = "fastapi_openapi_cli.cli:main"
 ```
-This points to the `app` object (a `typer.Typer` instance) in `cli.py`, which Click/Typer converts to an executable command during installation.
+This points to the `main` function in `cli.py`, which parses CLI arguments and returns process exit codes.
 
 ## Release Process
 

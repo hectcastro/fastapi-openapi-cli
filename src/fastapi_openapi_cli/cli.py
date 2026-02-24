@@ -1,31 +1,50 @@
-import typer
+import argparse
+import sys
+from collections.abc import Sequence
 
 from fastapi_openapi_cli.export import export_openapi
 from fastapi_openapi_cli.loader import AppLoadError, load_app
 
-app = typer.Typer(
-    name="fastapi-openapi",
-    help="CLI tool to export FastAPI OpenAPI specifications",
-    no_args_is_help=True,
-)
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="fastapi-openapi",
+        description="CLI tool to export FastAPI OpenAPI specifications",
+    )
+    parser.add_argument(
+        "--app",
+        "-a",
+        required=True,
+        help="FastAPI app path (e.g., module:app)",
+    )
+    parser.add_argument(
+        "--output",
+        "-o",
+        default=None,
+        help="Output file path (default: stdout)",
+    )
+    return parser
 
 
-@app.command()
-def export(
-    app_path: str = typer.Option(..., "--app", "-a", help="FastAPI app path (e.g., module:app)"),
-    output: str | None = typer.Option(
-        None, "--output", "-o", help="Output file path (default: stdout)"
-    ),
-) -> None:
-    """
-    Export the OpenAPI specification from a FastAPI application.
+def main(argv: Sequence[str] | None = None) -> int:
+    parser = build_parser()
+    arguments = list(argv) if argv is not None else sys.argv[1:]
 
-    Supports both JSON and YAML formats. Format is auto-detected from file extension.
-    If no output file is specified, outputs JSON to stdout.
-    """
+    if not arguments:
+        parser.print_help()
+        return 0
+
+    args = parser.parse_args(arguments)
+
     try:
-        fastapi_app = load_app(app_path)
-        export_openapi(fastapi_app, output)
+        fastapi_app = load_app(args.app)
+        export_openapi(fastapi_app, args.output)
     except AppLoadError as e:
-        typer.echo(str(e), err=True)
-        raise typer.Exit(code=1) from e
+        print(str(e), file=sys.stderr)
+        return 1
+
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

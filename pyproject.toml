@@ -6,10 +6,10 @@ readme = "README.md"
 license = { text = "Apache-2.0" }
 authors = [{ name = "Hector Castro", email = "hectcastro@gmail.com" }]
 requires-python = ">=3.12"
-dependencies = ["fastapi>=0.115.0", "typer>=0.15.0", "pyyaml>=6.0.2"]
+dependencies = ["fastapi>=0.115.0", "pyyaml>=6.0.2"]
 
 [project.scripts]
-fastapi-openapi = "fastapi_openapi_cli.cli:app"
+fastapi-openapi = "fastapi_openapi_cli.cli:main"
 
 [dependency-groups]
 dev = [
